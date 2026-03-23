@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azad Advocate Diary</title>
+<meta name="application-name" content="Azad Advocate Diary">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Azad Diary">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a237e">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#222;}
+.hdr{background:linear-gradient(135deg,#1a237e,#283593);color:white;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+.hdrl{display:flex;align-items:center;gap:14px;}
+.hdr h1{font-size:22px;font-weight:700;}
+.hdr p{font-size:12px;opacity:0.75;margin-top:2px;}
+.hdrb{display:flex;gap:8px;flex-wrap:wrap;}
+.hb{padding:8px 14px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
+.hbg{background:#1e7e34;color:white;}.hby{background:#fbbc04;color:#333;}.hbl{background:#e8eaf6;color:#1a237e;}
+.stats{display:flex;gap:14px;padding:18px 28px;flex-wrap:wrap;}
+.sc{background:white;border-radius:12px;padding:14px 20px;flex:1;min-width:130px;box-shadow:0 2px 8px rgba(0,0,0,0.07);border-left:4px solid;text-align:center;}
+.scb{border-color:#1a237e;}.sco{border-color:#e65100;}.scr{border-color:#c62828;}.scg{border-color:#2e7d32;}
+.sn{font-size:26px;font-weight:700;}.sl{font-size:11px;color:#666;margin-top:3px;}
+.main{padding:0 28px 30px;}
+.tabs{display:flex;gap:8px;margin-bottom:20px;}
+.tab{padding:10px 22px;border-radius:8px;border:2px solid #ddd;background:white;cursor:pointer;font-size:14px;font-weight:600;}
+.tab.active{background:#1a237e;color:white;border-color:#1a237e;}
+.panel{display:none;}.panel.active{display:block;}
+.card{background:white;border-radius:14px;padding:22px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,0.07);}
+.ct{font-size:15px;color:#1a237e;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #e8eaf6;font-weight:700;}
+.fg{margin-bottom:12px;}
+.fg label{display:block;font-size:11px;color:#555;margin-bottom:4px;font-weight:600;}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;font-family:inherit;}
+.fg textarea{resize:vertical;min-height:60px;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:#1a237e;}
+.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 14px;}
+.addbtn{background:#1a237e;color:white;border:none;border-radius:10px;padding:13px 30px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;display:block;}
+table{width:100%;border-collapse:collapse;}
+th{background:#e8eaf6;padding:11px 14px;text-align:left;font-size:11px;color:#1a237e;font-weight:700;text-transform:uppercase;}
+td{padding:12px 14px;border-bottom:1px solid #f0f0f0;font-size:13px;vertical-align:middle;}
+tr:hover td{background:#fafafa;}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.bp{background:#fff3e0;color:#e65100;}.bpd{background:#e8f5e9;color:#2e7d32;}
+.bt{background:#e3f2fd;color:#1565c0;}.bx{background:#ffebee;color:#c62828;}
+.bu{background:#f3e5f5;color:#6a1b9a;}.bd{background:#e0f2f1;color:#00695c;}
+.bf{background:#e3f2fd;color:#1565c0;}.ba{background:#fff3e0;color:#e65100;}
+.bj{background:#f3e5f5;color:#6a1b9a;}.bdi{background:#e8f5e9;color:#2e7d32;}
+.mbg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;}
+.mbg.open{display:flex;}
+.modal{background:white;border-radius:16px;padding:28px;width:95%;max-width:700px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2);}
+.mc{float:right;background:none;border:none;font-size:24px;cursor:pointer;color:#666;}
+.hi{border:1.5px solid #e8eaf6;border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+.hi.past{border-left:4px solid #c62828;}.hi.today{border-left:4px solid #1565c0;background:#f0f7ff;}.hi.upcoming{border-left:4px solid #6a1b9a;}
+.wa{background:#25D366;color:white;padding:7px 12px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;border:none;cursor:pointer;}
+.ms{background:#1565c0;color:white;padding:7px 12px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;border:none;cursor:pointer;}
+.al{background:linear-gradient(135deg,#fff3e0,#ffe0b2);border:1.5px solid #ff9800;border-radius:10px;padding:12px 18px;margin-bottom:18px;font-size:14px;color:#e65100;font-weight:600;}
+.bk{background:#e8f5e9;border:1.5px solid #a5d6a7;border-radius:10px;padding:12px 18px;margin-bottom:18px;font-size:13px;color:#2e7d32;}
+.sr{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.sr input,.sr select{padding:9px 13px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;flex:1;min-width:130px;}
+.empty{text-align:center;padding:40px;color:#aaa;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a237e;color:white;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;display:none;box-shadow:0 4px 16px rgba(0,0,0,0.2);}
+@media(max-width:700px){.main{padding:0 12px 20px;}.stats{padding:12px;}.hdr{padding:14px 16px;}th,td{padding:9px 8px;font-size:11px;}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdrl">
+    <div style="width:52px;height:52px;background:rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 2px 8px rgba(0,0,0,0.2);">⚖️</div>
+    <div>
+      <h1>Azad Advocate Diary</h1>
+      <p>Adv. Brijesh Kumar Azad — Personal Case Management</p>
+    </div>
+  </div>
+  <div class="hdrb">
+    <button class="hb hbg" onclick="exportExcel()">📥 Excel</button>
+    <button class="hb hby" onclick="backupDrive()">☁️ Drive Backup</button>
+    <button class="hb hbl" onclick="document.getElementById('rFile').click()">🔄 Restore</button>
+    <button class="hb" id="installBtn" style="background:#7c4dff;color:white;display:none;">📲 App Install करें</button>
+    <input type="file" id="rFile" accept=".json" style="display:none" onchange="restoreBackup(event)">
+  </div>
+</div>
+<div class="stats">
+  <div class="sc scb"><div class="sn" id="sTot">0</div><div class="sl">📁 कुल Cases</div></div>
+  <div class="sc sco"><div class="sn" id="sTod">0</div><div class="sl">📅 आज Hearing</div></div>
+  <div class="sc scr"><div class="sn" id="sPend">₹0</div><div class="sl">💰 Fees Pending</div></div>
+  <div class="sc scg"><div class="sn" id="sPaid">₹0</div><div class="sl">✅ Fees Received</div></div>
+</div>
+<div class="main">
+  <div id="aBox"></div><div id="bBox"></div>
+  <div class="tabs">
+    <div class="tab active" id="tb0" onclick="goTab(0)">📋 सभी Cases</div>
+    <div class="tab" id="tb1" onclick="goTab(1)">➕ नया Case जोड़ें</div>
+  </div>
+  <div class="panel active" id="p0">
+    <div class="card">
+      <div class="sr">
+        <input type="text" id="sq" placeholder="🔍 नाम या Case No..." oninput="renderCases()">
+        <select id="sf1" onchange="renderCases()"><option value="">सभी Types</option><option>Criminal</option><option>Civil</option><option>Property</option><option>Family / Divorce</option><option>Labour / Service</option><option>Other</option></select>
+        <select id="sf2" onchange="renderCases()"><option value="">सभी Fees</option><option value="pending">Pending</option><option value="paid">Paid</option></select>
+        <select id="sf3" onchange="renderCases()"><option value="">सभी Stages</option><option>Filed</option><option>Arguments</option><option>Judgment</option><option>Disposed</option></select>
+      </div>
+      <div style="overflow-x:auto;">
+        <table><thead><tr><th>#</th><th>Client</th><th>Case No.</th><th>Court</th><th>Type</th><th>Stage</th><th>अगली Date</th><th>Fees</th><th>Action</th></tr></thead><tbody id="cBody"></tbody></table>
+        <div id="cEmpty" class="empty" style="display:none;"><div style="font-size:40px;">📂</div><p>कोई case नहीं।</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel" id="p1">
+    <div class="card">
+      <div class="ct">➕ नया Case जोड़ें</div>
+      <div class="frow">
+        <div class="fg"><label>👤 Client का नाम *</label><input type="text" id="fn" placeholder="जैसे: Ramesh Kumar"></div>
+        <div class="fg"><label>📱 WhatsApp Number *</label><input type="tel" id="fp" placeholder="91XXXXXXXXXX"></div>
+        <div class="fg"><label>📁 Case Number</label><input type="text" id="fc" placeholder="जैसे: 123/2024"></div>
+        <div class="fg"><label>⚖️ Court का नाम</label><input type="text" id="fct" placeholder="जैसे: District Court Patna"></div>
+        <div class="fg"><label>📋 Case Type</label><select id="fty"><option value="">-- चुनें --</option><option>Criminal</option><option>Civil</option><option>Property</option><option>Family / Divorce</option><option>Labour / Service</option><option>Other</option></select></div>
+        <div class="fg"><label>📊 Case Stage</label><select id="fst"><option value="">-- Stage --</option><option>Filed</option><option>Arguments</option><option>Judgment</option><option>Disposed</option></select></div>
+        <div class="fg"><label>📅 पहली Hearing की तारीख</label><input type="date" id="fd"></div>
+        <div class="fg"><label>💰 Total Fees (₹)</label><input type="number" id="ff" placeholder="जैसे: 5000"></div>
+      </div>
+      <div class="fg"><label>📝 Case Note</label><textarea id="fnote" placeholder="Case की जानकारी..."></textarea></div>
+      <button class="addbtn" id="addCaseBtn">✅ Case जोड़ें</button>
+    </div>
+  </div>
+</div>
+<div class="mbg" id="cModal">
+  <div class="modal">
+    <button class="mc" onclick="closeModal()">✕</button>
+    <h2 id="mName" style="color:#1a237e;margin-bottom:6px;padding-right:30px;"></h2>
+    <div id="mSub" style="font-size:13px;color:#666;margin-bottom:18px;"></div>
+    <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:100px;background:#f5f5f5;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:11px;color:#666;">📱 Number</div><div style="font-weight:700;" id="mPh"></div></div>
+      <div style="flex:1;min-width:100px;background:#f5f5f5;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:11px;color:#666;">💰 Fees</div><div style="font-weight:700;" id="mFee"></div></div>
+      <div style="flex:1;min-width:100px;background:#f5f5f5;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:11px;color:#666;">📊 Stage</div><div style="font-weight:700;" id="mStg"></div></div>
+      <div style="flex:1;min-width:100px;background:#f5f5f5;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:11px;color:#666;">💳 Status</div><div style="font-weight:700;" id="mFst"></div></div>
+    </div>
+    <div id="mNote" style="background:#fffde7;border:1px solid #fff176;border-radius:8px;padding:12px;margin-bottom:18px;font-size:13px;display:none;"></div>
+    <div style="background:#f8f9ff;border-radius:12px;padding:14px;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:700;color:#1a237e;margin-bottom:10px;">📊 Stage बदलें:</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="doStage('Filed')" style="padding:7px 14px;border:none;border-radius:6px;background:#e3f2fd;color:#1565c0;font-weight:600;cursor:pointer;">📋 Filed</button>
+        <button onclick="doStage('Arguments')" style="padding:7px 14px;border:none;border-radius:6px;background:#fff3e0;color:#e65100;font-weight:600;cursor:pointer;">⚖️ Arguments</button>
+        <button onclick="doStage('Judgment')" style="padding:7px 14px;border:none;border-radius:6px;background:#f3e5f5;color:#6a1b9a;font-weight:600;cursor:pointer;">🔨 Judgment</button>
+        <button onclick="doStage('Disposed')" style="padding:7px 14px;border:none;border-radius:6px;background:#e8f5e9;color:#2e7d32;font-weight:600;cursor:pointer;">✅ Disposed</button>
+      </div>
+    </div>
+    <div style="background:#f0f7ff;border-radius:12px;padding:14px;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:700;color:#1a237e;margin-bottom:10px;">📅 नई Hearing Date जोड़ें:</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+        <div class="fg" style="flex:1;min-width:140px;margin:0;"><label>तारीख *</label><input type="date" id="nhd"></div>
+        <div class="fg" style="flex:2;min-width:160px;margin:0;"><label>Note</label><input type="text" id="nhn" placeholder="जैसे: Arguments होगा..."></div>
+        <button onclick="doAddHearing()" style="padding:10px 16px;background:#1a237e;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">➕ जोड़ें</button>
+      </div>
+    </div>
+    <div style="font-size:13px;font-weight:700;color:#1a237e;margin-bottom:10px;">📋 Hearing History:</div>
+    <div id="hList"></div>
+    <div style="margin-top:16px;padding-top:14px;border-top:2px solid #f0f0f0;display:flex;gap:10px;flex-wrap:wrap;">
+      <button id="mPaidBtn" onclick="doFeePaid()" style="padding:9px 18px;background:#2e7d32;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">✅ Fees Paid करें</button>
+      <button onclick="doDelCase()" style="padding:9px 18px;background:#ffebee;color:#c62828;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">🗑️ Case Delete करें</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var cases=[];var activeId=null;var KEY='azadDiaryV6';
+function load(){try{cases=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){cases=[];}}
+function save(){localStorage.setItem(KEY,JSON.stringify(cases));showBkp();}
+function todayStr(){var d=new Date(),mm=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return d.getFullYear()+'-'+mm+'-'+dd;}
+function fmt(s){if(!s)return'—';var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+function db(d){if(!d)return'';var t=todayStr();if(d===t)return'<span class="badge bt">🔵 आज</span>';if(d<t)return'<span class="badge bx">🔴 बीत गई</span>';return'<span class="badge bu">🟣 आने वाली</span>';}
+function sb(s){if(!s)return'—';var m={Filed:'bf',Arguments:'ba',Judgment:'bj',Disposed:'bdi'};return'<span class="badge '+(m[s]||'bp')+'">'+s+'</span>';}
+function nextH(c){var t=todayStr(),arr=(c.hearings||[]).filter(function(h){return h.date>=t&&!h.done;});arr.sort(function(a,b){return a.date.localeCompare(b.date);});return arr.length?arr[0].date:null;}
+function toast(msg){var e=document.getElementById('toast');e.textContent=msg;e.style.display='block';setTimeout(function(){e.style.display='none';},2500);}
+function goTab(i){document.getElementById('p0').classList.remove('active');document.getElementById('p1').classList.remove('active');document.getElementById('tb0').classList.remove('active');document.getElementById('tb1').classList.remove('active');document.getElementById('p'+i).classList.add('active');document.getElementById('tb'+i).classList.add('active');}
+
+// ADD CASE - uses addEventListener, not onclick
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('addCaseBtn').addEventListener('click',function(){
+    var name=document.getElementById('fn').value.trim();
+    var phone=document.getElementById('fp').value.trim();
+    if(!name){alert('❗ Client का नाम डालें!');document.getElementById('fn').focus();return;}
+    if(!phone){alert('❗ WhatsApp Number डालें!');document.getElementById('fp').focus();return;}
+    var dv=document.getElementById('fd').value;
+    var c={id:Date.now(),name:name,phone:phone,caseNo:document.getElementById('fc').value.trim(),court:document.getElementById('fct').value.trim(),type:document.getElementById('fty').value,stage:document.getElementById('fst').value,fees:document.getElementById('ff').value||0,feesPaid:false,note:document.getElementById('fnote').value.trim(),hearings:dv?[{id:Date.now(),date:dv,note:'',done:false}]:[],added:todayStr()};
+    cases.unshift(c);save();
+    ['fn','fp','fc','fct','fty','fst','fd','ff','fnote'].forEach(function(id){document.getElementById(id).value='';});
+    renderAll();goTab(0);toast('✅ '+name+' का case जोड़ा गया!');
+  });
+});
+
+function openModal(id){
+  activeId=id;var c=null;
+  for(var i=0;i<cases.length;i++){if(cases[i].id===id){c=cases[i];break;}}
+  if(!c)return;
+  document.getElementById('mName').textContent='👤 '+c.name;
+  document.getElementById('mSub').textContent='Case: '+(c.caseNo||'N/A')+' | Court: '+(c.court||'N/A')+' | Type: '+(c.type||'N/A');
+  document.getElementById('mPh').textContent=c.phone;
+  document.getElementById('mFee').textContent='₹'+Number(c.fees||0).toLocaleString('en-IN');
+  document.getElementById('mStg').textContent=c.stage||'—';
+  document.getElementById('mFst').textContent=c.feesPaid?'✅ Paid':'⏳ Pending';
+  var ne=document.getElementById('mNote');
+  if(c.note){ne.innerHTML='📝 '+c.note;ne.style.display='block';}else{ne.style.display='none';}
+  document.getElementById('mPaidBtn').style.display=c.feesPaid?'none':'inline-block';
+  document.getElementById('nhd').value='';document.getElementById('nhn').value='';
+  renderH(c);document.getElementById('cModal').classList.add('open');
+}
+function closeModal(){document.getElementById('cModal').classList.remove('open');activeId=null;}
+function getActive(){var c=null;for(var i=0;i<cases.length;i++){if(cases[i].id===activeId){c=cases[i];break;}}return c;}
+function buildWA(c,ds){var t=todayStr();var s=(c.hearings||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});var p=s.filter(function(h){return h.date<t&&h.done;});var ld=p.length?'\n📌 पिछली तारीख: '+fmt(p[p.length-1].date):'';var sl=c.stage?'\n📊 Stage: '+c.stage:'';return 'नमस्ते '+c.name+' जी 🙏\n\nआपके केस की जानकारी:\n📁 Case No: '+(c.caseNo||'N/A')+'\n⚖️ Court: '+(c.court||'N/A')+sl+ld+'\n📅 अगली तारीख: '+fmt(ds)+'\n\nकृपया समय पर उपस्थित रहें।\n\nधन्यवाद 🙏\n— Adv. Brijesh Kumar Azad';}
+function buildSMS(c,ds){var t=todayStr();var s=(c.hearings||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});var p=s.filter(function(h){return h.date<t&&h.done;});var ld=p.length?' | पिछली: '+fmt(p[p.length-1].date):'';return c.name+' जी, Case '+(c.caseNo||'N/A')+', Court: '+(c.court||'N/A')+ld+', अगली तारीख: '+fmt(ds)+'. समय पर आएं। -Adv. Brijesh Kumar Azad';}
+function renderH(c){var list=document.getElementById('hList');if(!c.hearings||!c.hearings.length){list.innerHTML='<div class="empty"><div style="font-size:36px;">📅</div><p>कोई Hearing नहीं।</p></div>';return;}var t=todayStr();var s=c.hearings.slice().sort(function(a,b){return b.date.localeCompare(a.date);});var h='';for(var i=0;i<s.length;i++){var x=s[i];var cls=x.date<t?'past':x.date===t?'today':'upcoming';var wa='https://wa.me/'+c.phone+'?text='+encodeURIComponent(buildWA(c,x.date));var sm='sms:'+c.phone+'?body='+encodeURIComponent(buildSMS(c,x.date));h+='<div class="hi '+cls+'"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;"><div style="font-weight:700;font-size:15px;">📅 '+fmt(x.date)+' '+db(x.date)+'</div>'+(x.done?'<span class="badge bd">✅ Completed</span>':'')+'</div>'+(x.note?'<div style="font-size:12px;color:#555;margin-top:4px;">📝 '+x.note+'</div>':'')+'<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;"><a class="wa" href="'+wa+'" target="_blank">💬 WhatsApp</a><a class="ms" href="'+sm+'">📱 SMS</a>'+(!x.done?'<button onclick="doHDone('+x.id+')" style="padding:7px 12px;background:#e0f2f1;color:#00695c;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">✅ Done</button>':'')+'<button onclick="doHDel('+x.id+')" style="padding:7px 12px;background:#ffebee;color:#c62828;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">🗑️</button></div></div>';}list.innerHTML=h;}
+function doAddHearing(){var d=document.getElementById('nhd').value;if(!d){alert('तारीख डालें!');return;}var c=getActive();if(!c)return;if(!c.hearings)c.hearings=[];c.hearings.push({id:Date.now(),date:d,note:document.getElementById('nhn').value.trim(),done:false});document.getElementById('nhd').value='';document.getElementById('nhn').value='';save();renderAll();renderH(c);toast('✅ Hearing जोड़ी गई!');}
+function doHDone(hid){var c=getActive();if(!c)return;for(var j=0;j<c.hearings.length;j++){if(c.hearings[j].id===hid){c.hearings[j].done=true;break;}}save();renderAll();renderH(c);toast('✅ Done!');}
+function doHDel(hid){if(!confirm('Hearing हटाएं?'))return;var c=getActive();if(!c)return;c.hearings=c.hearings.filter(function(h){return h.id!==hid;});save();renderAll();renderH(c);}
+function doStage(st){var c=getActive();if(!c)return;c.stage=st;save();renderAll();openModal(activeId);toast('📊 Stage: '+st);}
+function doFeePaid(){var c=getActive();if(!c)return;c.feesPaid=true;save();renderAll();openModal(activeId);toast('✅ Fees Paid!');}
+function doDelCase(){if(!confirm('Case delete होगा?'))return;cases=cases.filter(function(x){return x.id!==activeId;});save();renderAll();closeModal();toast('🗑️ Delete हो गया।');}
+function renderCases(){var q=document.getElementById('sq').value.toLowerCase();var f1=document.getElementById('sf1').value;var f2=document.getElementById('sf2').value;var f3=document.getElementById('sf3').value;var t=todayStr();var fl=cases.filter(function(c){var ms=c.name.toLowerCase().indexOf(q)>=0||(c.caseNo||'').toLowerCase().indexOf(q)>=0;return ms&&(!f1||c.type===f1)&&(!f2||(f2==='paid'?c.feesPaid:!c.feesPaid))&&(!f3||c.stage===f3);});var tb=document.getElementById('cBody'),em=document.getElementById('cEmpty');if(!fl.length){tb.innerHTML='';em.style.display='block';return;}em.style.display='none';var h='';for(var i=0;i<fl.length;i++){var c=fl[i],nh=nextH(c);var ht=(c.hearings||[]).some(function(x){return x.date===t&&!x.done;});h+='<tr'+(ht?' style="background:#fff8e1;"':'')+'>'+
+'<td>'+(i+1)+'</td>'+
+'<td><strong>'+c.name+'</strong><br><span style="color:#666;font-size:11px;">📱 '+c.phone+'</span></td>'+
+'<td>'+(c.caseNo||'—')+'</td><td>'+(c.court||'—')+'</td><td>'+(c.type||'—')+'</td>'+
+'<td>'+sb(c.stage)+'</td>'+
+'<td>'+fmt(nh)+'<br>'+db(nh)+'</td>'+
+'<td>₹'+Number(c.fees||0).toLocaleString('en-IN')+'<br><span class="badge '+(c.feesPaid?'bpd':'bp')+'">'+(c.feesPaid?'✅ Paid':'⏳ Pending')+'</span></td>'+
+'<td><button onclick="openModal('+c.id+')" data-id="'+c.id+'" style="padding:9px 16px;background:#1a237e;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.3px;">📂 खोलें</button></td></tr>';}tb.innerHTML=h;}
+function renderStats(){var t=todayStr(),tc=0,pend=0,paid=0;for(var i=0;i<cases.length;i++){var c=cases[i];if((c.hearings||[]).some(function(h){return h.date===t&&!h.done;}))tc++;var f=Number(c.fees||0);if(c.feesPaid)paid+=f;else pend+=f;}document.getElementById('sTot').textContent=cases.length;document.getElementById('sTod').textContent=tc;document.getElementById('sPend').textContent='₹'+pend.toLocaleString('en-IN');document.getElementById('sPaid').textContent='₹'+paid.toLocaleString('en-IN');}
+function renderAlert(){var t=todayStr();var tc=cases.filter(function(c){return(c.hearings||[]).some(function(h){return h.date===t&&!h.done;});});document.getElementById('aBox').innerHTML=tc.length?'<div class="al">🔔 आज '+tc.length+' Hearing है: '+tc.map(function(c){return c.name;}).join(', ')+'</div>':'';}
+function showBkp(){var l=localStorage.getItem('azadDiaryBkp');document.getElementById('bBox').innerHTML=l?'<div class="bk">☁️ Last Backup: <strong>'+l+'</strong></div>':'';}
+function renderAll(){renderStats();renderAlert();renderCases();showBkp();}
+function exportExcel(){if(!cases.length){alert('कोई data नहीं!');return;}var rows=[];for(var i=0;i<cases.length;i++){var c=cases[i];var hs=(c.hearings||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});if(!hs.length){rows.push({Client:c.name,Phone:c.phone,'Case No':c.caseNo||'',Court:c.court||'',Type:c.type||'',Stage:c.stage||'','Hearing Date':'','Hearing Note':'',Status:'',Fees:c.fees||0,'Fees Paid':c.feesPaid?'Paid':'Pending',Note:c.note||''});}else{for(var j=0;j<hs.length;j++){rows.push({Client:j===0?c.name:'',Phone:j===0?c.phone:'','Case No':j===0?(c.caseNo||''):'',Court:j===0?(c.court||''):'',Type:j===0?(c.type||''):'',Stage:j===0?(c.stage||''):'','Hearing Date':fmt(hs[j].date),'Hearing Note':hs[j].note||'',Status:hs[j].done?'Done':'Pending',Fees:j===0?(c.fees||0):'','Fees Paid':j===0?(c.feesPaid?'Paid':'Pending'):'',Note:j===0?(c.note||''):''});}}}var ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Cases');XLSX.writeFile(wb,'Azad_Advocate_Diary.xlsx');toast('✅ Excel download हो गई!');}
+function backupDrive(){if(!cases.length){alert('कोई data नहीं!');return;}var b=new Blob([JSON.stringify(cases,null,2)],{type:'application/json'});var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='Azad_Diary_Backup_'+todayStr()+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);localStorage.setItem('azadDiaryBkp',new Date().toLocaleString('hi-IN'));showBkp();setTimeout(function(){if(confirm('✅ File download हो गई!\nOK → Google Drive खुलेगा।')){window.open('https://drive.google.com','_blank');}},400);}
+function restoreBackup(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){try{var d=JSON.parse(ev.target.result);if(!Array.isArray(d))throw'bad';if(!confirm(d.length+' cases restore होंगे?'))return;cases=d;save();renderAll();toast('✅ '+d.length+' cases restore!');}catch(err){alert('❌ Valid backup नहीं!');}};r.readAsText(f);e.target.value='';}
+load();renderAll();
+
+// Extra safety — table click delegation
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('button[data-id]');
+  if (btn) { openModal(Number(btn.getAttribute('data-id'))); }
+});
+
+// ── INSTALL AS APP ────────────────────────────────────────────
+var deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBtn').style.display = 'inline-block';
+});
+document.getElementById('installBtn').addEventListener('click', function() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function() { deferredPrompt = null; });
+  } else {
+    alert('App install करने के लिए:\n\n📱 Mobile पर:\nChrome menu (3 dots) → "Add to Home Screen"\n\n💻 Computer पर:\nChrome address bar में दाईं तरफ ⊕ icon दबाओ → Install');
+  }
+});
+window.addEventListener('appinstalled', function() {
+  toast('✅ App install हो गया! Home Screen पर देखो।');
+  document.getElementById('installBtn').style.display = 'none';
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "Azad Advocate Diary",
+  "short_name": "Azad Diary",
+  "description": "Adv. Brijesh Kumar Azad - Personal Case Management",
+  "start_url": "/azad-advocate-diary/",
+  "display": "standalone",
+  "background_color": "#1a237e",
+  "theme_color": "#1a237e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
